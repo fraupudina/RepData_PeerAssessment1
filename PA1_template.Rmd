@@ -75,28 +75,32 @@ ggplot(data=ave_stepsper_interval, aes(x=interval, y=meansteps)) + geom_line() +
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 ```{r}
-Library(Hmisc)
 
 num_NA <- length(which(is.na(activity_dfm$steps)))
 
-new_activity_dfm <- activity_dfm
+newactivity_dfm <- activity_dfm
 
-new_activity_dfm$steps <- impute(activity_dfm$steps, fun=mean)
+newactivity_dfm$steps <- impute(newactivity_dfm$steps, fun=mean)
 
-newstepsperday <- tapply(new_activity_dfm$steps, new_activity_dfm$date, sum)
+newstepsperday <- tapply(newactivity_dfm$steps, newactivity_dfm$date, sum)
 
-hist(newstepsperday, main = ("Total number of steps taken each day"),col="green", xlab="Total steps per day")
+qplot(newstepsperday, xlab='New total steps per day', ylab='Total steps per day')
 
-newsteps_mean <-mean(newstepsperday$steps)
+newstepsperday_mean <- mean(newstepsperday)
+paste("New Steps Mean is :", newstepsperday_mean)
+
+newstepsperday_median <- median(newstepsperday)
+paste("New Steps Median is :", newstepsperday_median)
+
 
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ```{r}
-new_activity_dfm$dateType <-  ifelse(as.POSIXlt(new_activity_dfm$date)$wday %in% c(0,6), 'weekend', 'weekday')
+newactivity_dfm$dateType <-  ifelse(as.POSIXlt(newactivity_dfm$date)$wday %in% c(0,6), 'weekend', 'weekday')
 
-newave_stepsper_interval <- aggregate(steps ~ interval + dateType, data=new_activity_dfm, mean)
+newave_stepsper_interval <- aggregate(steps ~ interval + dateType, data=newactivity_dfm, mean)
 
 ggplot(newave_stepsper_interval, aes(interval, steps)) + 
     geom_line() + 
